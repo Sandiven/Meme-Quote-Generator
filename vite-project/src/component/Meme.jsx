@@ -22,6 +22,7 @@ function Meme(){
 
           return (
             <div key={meme.id} className="relative bg-gray-800 rounded-xl overflow-hidden shadow hover:scale-105 transition-transform duration-300">
+               <a href={meme.url}download className="absolute top-2 right-2 bg-white text-black px-2 py-1 text-sm rounded hover:bg-green-400 transition"title="Download Meme">🔍</a>
               <img src={meme.url} alt={meme.name} className="w-full h-64 object-cover" />
               <div className="p-4">
                 <h2 className="text-lg font-semibold text-center">{meme.name}</h2>

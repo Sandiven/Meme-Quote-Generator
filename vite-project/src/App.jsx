@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState , useEffect} from 'react'
 import { createContext, useContext } from "react";
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Navbar from './component/Navbar'
@@ -12,13 +12,41 @@ export const useMeme = () => useContext(MemeContext);
 
 function App() {
 
-  const [favourites, setFavourites] = useState([])
+  const [favourites, setFavourites] = useState(() => {
+    const stored = localStorage.getItem("favourites")
+    return stored ? JSON.parse(stored) : [];
+  })
 
-  const toggleFavourite = (meme) => {
-    setFavourites((prev) => {
-      const isFav = prev.find((item) => item.id === meme.id)
-      return isFav? prev.filter((item) => item.id !== meme.id): [...prev, meme]})
+  function toggleFavourite(item) {
+    const isAlreadyFavourite = favourites.some((fav) => {
+      return (
+        fav.text==item.text &&
+        ((item.type=="quote" && fav.author==item.author) ||
+         (item.type=="meme" && fav.image==item.image)) &&
+        fav.type==item.type
+      )})
+  
+    if (isAlreadyFavourite) {
+      setFavourites((prev) =>
+        prev.filter((fav) => {
+          return !(
+            fav.text==item.text &&
+            ((item.type=="quote" && fav.author==item.author) ||
+             (item.type=="meme" && fav.image==item.image)) &&
+            fav.type==item.type
+          )})
+      )
+    } 
+    else
+      setFavourites((prev) => [...prev, item])
   }
+
+  useEffect(() => {
+    localStorage.setItem("favourites", JSON.stringify(favourites))
+  }, [favourites])
+  
+  
+  
   return (
     <>
     <MemeContext.Provider value={{ favourites, toggleFavourite }}>
