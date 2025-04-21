@@ -16,7 +16,7 @@ function Quote() {
 
   return (
     <div className="p-6 bg-gray-900 min-h-screen text-white">
-      <h1 className="text-3xl font-bold mb-6 text-center">💬 Quotes</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center">Quotes 💭</h1>
       <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {quotes.map((quote, index) => {
           const isFav = favourites.find(

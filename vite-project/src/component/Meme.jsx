@@ -1,39 +1,71 @@
-import { useEffect, useState } from "react"
-import { useMeme } from "../App"
+import { useEffect, useState } from "react";
+import { useMeme } from "../App";
 
-function Meme(){
-    const [meme, setMeme]=useState([])
-    const { favourites, toggleFavourite } = useMeme();
+function Meme() {
+  const [memes, setMemes] = useState([]);
+  const { favourites, toggleFavourite } = useMeme();
 
-    useEffect(() => {
-        fetch("https://api.imgflip.com/get_memes")
-          .then((res)=>res.json())
-          .then((data) => {
-            setMeme(data.data.memes)
-          });
-      }, []);
+  useEffect(() => {
+    fetch("https://api.imgflip.com/get_memes")
+      .then((res) => res.json())
+      .then((data) => {
+        setMemes(data.data.memes);
+      });
+  }, []);
 
-    return(
-        <>
-        <div className="p-6 bg-gray-900 min-h-screen text-white">
-          <h1 className="text-3xl font-bold mb-6 text-center">Meme Templates 😁</h1>
-            <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {meme.map((meme) => {const isFav = favourites.find((item) => item.id === meme.id)
+  return (
+    <div className="p-6 bg-gray-900 min-h-screen text-white">
+      <h1 className="text-3xl font-bold mb-6 text-center">Meme Templates 😁</h1>
+
+      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+        {memes.map((meme, index) => {
+          const isFav = favourites.some(
+            (fav) =>
+              fav.type === "meme" &&
+              fav.image === meme.url &&
+              fav.name === meme.name
+          );
 
           return (
-            <div key={meme.id} className="relative bg-gray-800 rounded-xl overflow-hidden shadow hover:scale-105 transition-transform duration-300">
-               <a href={meme.url}download className="absolute top-2 right-2 bg-white text-black px-2 py-1 text-sm rounded hover:bg-green-400 transition"title="Download Meme">🔍</a>
-              <img src={meme.url} alt={meme.name} className="w-full h-64 object-cover" />
-              <div className="p-4">
-                <h2 className="text-lg font-semibold text-center">{meme.name}</h2>
-              </div>
-              <button onClick={() => toggleFavourite(meme)}className={`absolute bottom-3 left-3 text-2xl transition-colors ${isFav ? "text-yellow-400" : "text-gray-400"} hover:text-yellow-500`}>★</button>
+            <div
+              key={index}
+              className="relative bg-gray-800 rounded-xl shadow p-3 hover:shadow-xl transition flex flex-col justify-between h-[350px]"
+            >
+              <img
+                src={meme.url}
+                alt={meme.name}
+                className="rounded-md w-full h-48 object-contain bg-gray-700 mb-2"
+              />
+              <p className="text-center text-sm text-white font-semibold truncate">{meme.name}</p>
+
+              {/* Star */}
+              <button
+                onClick={() =>
+                  toggleFavourite({ image: meme.url, name: meme.name, type: "meme" })
+                }
+                className={`absolute bottom-3 left-3 text-2xl transition ${
+                  isFav ? "text-yellow-400" : "text-gray-400"
+                } hover:text-yellow-500`}
+              >
+                ★
+              </button>
+
+              {/* Download */}
+              <a
+                href={meme.url}
+                download
+                target="_blank"
+                rel="noreferrer"
+                className="absolute top-3 right-3 text-white bg-gray-700 hover:bg-green-500 rounded-full p-1 text-sm"
+              >
+                🔍
+              </a>
             </div>
-          )
-          })}
-            </div>
-        </div>
-        </>      
-    )
+          );
+        })}
+      </div>
+    </div>
+  );
 }
-export default Meme
+
+export default Meme;
